@@ -1,4 +1,4 @@
-from rest_framework.test import APITestCase
+from rest_framework.test import APITestCase, APIClient
 from django.test import TestCase
 
 from django.contrib.auth.models import User
@@ -24,10 +24,12 @@ class PostModelTestCase(TestCase):
 
 class PostViewAPITestCase(APITestCase):
     def setUp(self):
+        self.client = APIClient()
         self.user = User.objects.create_user(
             username='testuser', password='123456789')
         Post.objects.create(
             title='test title', content='test content', author=self.user)
+        self.client.force_authenticate(user=self.user)
 
     def test_post_list(self):
         response = self.client.get('/api/posts/')
